@@ -1,4 +1,7 @@
-const scrapeDataByRank = require("../services/puppeteerFunctions");
+const {
+  scrapeDataByRank,
+  scrapeDataById,
+} = require("../services/puppeteerFunctions");
 
 const getProductByRank = async (req, res) => {
   try {
@@ -32,7 +35,15 @@ const getProductByRank = async (req, res) => {
 };
 
 const getProductById = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    let url = `https://br.openfoodfacts.org/`;
+    const response = await scrapeDataById(url, id);
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json("Erro interno do servidor");
+  }
 };
 
-module.exports = { getProductByRank };
+module.exports = { getProductByRank, getProductById };
