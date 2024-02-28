@@ -1,5 +1,5 @@
-const puppeteer = require("puppeteer");
 const errorRes = require("../utils/responses/errorResponse");
+const getPage = require("./puppeteerConfig");
 
 const dataElement = async (page, value, textToRemove) => {
   try {
@@ -17,8 +17,7 @@ const dataElement = async (page, value, textToRemove) => {
 
 const scrapeDataByRank = async (res, url) => {
   try {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const { browser, page } = await getPage();
     await page.goto(url);
 
     const links = await page.$$eval(".list_product_a", (el) =>
@@ -28,7 +27,7 @@ const scrapeDataByRank = async (res, url) => {
     let response = [];
 
     for (link of links) {
-      const newPage = await browser.newPage();
+      const newPage = await page.browser().newPage();
       await newPage.goto(link);
 
       const title = await dataElement(newPage, ".title-1");
@@ -80,8 +79,7 @@ const scrapeDataByRank = async (res, url) => {
 
 const scrapeDataById = async (res, url) => {
   try {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const { browser, page } = await getPage();
     await page.goto(url);
 
     const title = await dataElement(page, ".title-1");
@@ -106,84 +104,6 @@ const scrapeDataById = async (res, url) => {
     );
     const quantity = await dataElement(page, "#field_quantity .field_value");
 
-    let elementHasPalmOil = await page.$(
-      'a[href="#panel_ingredients_analysis_en-palm-oil-content-unknown_content"] h4.evaluation_unknown_title'
-    );
-
-    if (!elementHasPalmOil) {
-      elementHasPalmOil = await page.$(
-        'a[href="#panel_ingredients_analysis_en-palm-oil-free_content"] h4.evaluation_good_title'
-      );
-    }
-    let hasPalmOil;
-
-    if (elementHasPalmOil) {
-      hasPalmOil = await page.evaluate(
-        (element) => element.innerText,
-        elementHasPalmOil
-      );
-    } else {
-      hasPalmOil = "unknown";
-    }
-
-    let elementIsVegan = await page.$(
-      'a[href="#panel_ingredients_analysis_en-non-vegan_content"] h4.evaluation_bad_title'
-    );
-
-    if (!elementIsVegan) {
-      elementIsVegan = await page.$(
-        'a[href="#panel_ingredients_analysis_en-vegan_content"] h4.evaluation_good_title'
-      );
-    }
-
-    let isVegan;
-
-    if (elementIsVegan) {
-      isVegan = await page.evaluate(
-        (element) => element.innerText,
-        elementIsVegan
-      );
-    } else {
-      isVegan = "unknown";
-    }
-
-    let elementIsVegetarian = await page.$(
-      'a[href="#panel_ingredients_analysis_en-non-vegetarian_content"] h4.evaluation_bad_title'
-    );
-
-    if (!elementIsVegetarian) {
-      elementIsVegetarian = await page.$(
-        'a[href="#panel_ingredients_analysis_en-vegetarian_content"] h4.evaluation_good_title'
-      );
-    }
-    let isVegetarian;
-
-    if (elementIsVegetarian) {
-      isVegetarian = await page.evaluate(
-        (element) => element.innerText,
-        elementIsVegetarian
-      );
-    } else {
-      isVegetarian = "unknown";
-    }
-
-    let list = [];
-    let ingredients;
-    let elementIngredients = await page.$(
-      "#panel_ingredients_content .panel_text"
-    );
-
-    if (elementIngredients) {
-      ingredients = await dataElement(
-        page,
-        "#panel_ingredients_content .panel_text"
-      );
-    } else {
-      ingredients = "unknown";
-    }
-
-    list.push(ingredients.replace(/"/g, "'"));
-
     let values = [];
 
     const values1 = await dataElement(
@@ -204,6 +124,78 @@ const scrapeDataById = async (res, url) => {
     );
     const nutritionValues = [values1, values2, values3, values4];
 
+    let list = [];
+    let ingredients;
+    let elementIngredients = await page.$(
+      "#panel_ingredients_content .panel_text"
+    );
+    if (elementIngredients) {
+      ingredients = await dataElement(
+        page,
+        "#panel_ingredients_content .panel_text"
+      );
+    } else {
+      ingredients = "unknown";
+    }
+
+    list.push(ingredients.replace(/"/g, "'"));
+
+    let hasPalmOil;
+    let elementHasPalmOil = await page.$(
+      'a[href="#panel_ingredients_analysis_en-palm-oil-content-unknown_content"] h4.evaluation_unknown_title'
+    );
+    if (!elementHasPalmOil) {
+      elementHasPalmOil = await page.$(
+        'a[href="#panel_ingredients_analysis_en-palm-oil-free_content"] h4.evaluation_good_title'
+      );
+    }
+    if (elementHasPalmOil) {
+      hasPalmOil = await page.evaluate(
+        (element) => element.innerText,
+        elementHasPalmOil
+      );
+    } else {
+      hasPalmOil = "unknown";
+    }
+
+    let isVegan;
+    let elementIsVegan = await page.$(
+      'a[href="#panel_ingredients_analysis_en-non-vegan_content"] h4.evaluation_bad_title'
+    );
+
+    if (!elementIsVegan) {
+      elementIsVegan = await page.$(
+        'a[href="#panel_ingredients_analysis_en-vegan_content"] h4.evaluation_good_title'
+      );
+    }
+    if (elementIsVegan) {
+      isVegan = await page.evaluate(
+        (element) => element.innerText,
+        elementIsVegan
+      );
+    } else {
+      isVegan = "unknown";
+    }
+
+    let isVegetarian;
+    let elementIsVegetarian = await page.$(
+      'a[href="#panel_ingredients_analysis_en-non-vegetarian_content"] h4.evaluation_bad_title'
+    );
+
+    if (!elementIsVegetarian) {
+      elementIsVegetarian = await page.$(
+        'a[href="#panel_ingredients_analysis_en-vegetarian_content"] h4.evaluation_good_title'
+      );
+    }
+    if (elementIsVegetarian) {
+      isVegetarian = await page.evaluate(
+        (element) => element.innerText,
+        elementIsVegetarian
+      );
+    } else {
+      isVegetarian = "unknown";
+    }
+
     for (let i = 0; i < nutritionValues.length; i++) {
       let level;
       if (nutritionValues[i].includes("baixa")) {
@@ -217,12 +209,10 @@ const scrapeDataById = async (res, url) => {
       values.push([level, nutritionValues[i]]);
     }
 
+    let servingSize;
     let elementServingSize = await page.$(
       "#panel_serving_size_content .panel_text"
     );
-
-    let servingSize;
-
     if (elementServingSize) {
       servingSize = await page.evaluate(
         (element) => element.innerText,

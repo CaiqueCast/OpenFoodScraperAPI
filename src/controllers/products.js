@@ -22,10 +22,11 @@ const getProductByRank = async (req, res) => {
     }
 
     Number(nova);
-    const validQuery = await validateRank({ nutrition, nova });
+    const validQuery = await validateRank({ nutrition, nova }, url);
     if (validQuery) {
       return errorRes.errorResponse400(res, validQuery);
     }
+
     const response = await scrapeDataByRank(res, url);
 
     return successRes.successResponse200(res, response);
