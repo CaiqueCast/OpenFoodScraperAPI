@@ -1,8 +1,9 @@
 const puppeteer = require("puppeteer");
+const errorRes = require("../utils/responses/errorResponse");
 
 const scrapeDataByRank = async (url) => {
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto(url);
     const links = await page.$$eval(".list_product_a", (el) =>
@@ -68,22 +69,15 @@ const scrapeDataByRank = async (url) => {
     await browser.close();
     return response;
   } catch (error) {
-    console.error(error.message);
+    return errorRes.errorResponse500(res, error.message);
   }
 };
 
-const scrapeDataById = async (url, productId) => {
+const scrapeDataById = async (url) => {
   try {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto(url);
-
-    await page.waitForSelector('div.columns input[type="text"]');
-    await page.type('div.columns input[type="text"]', productId);
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click('div.columns button[type="submit"]'),
-    ]);
 
     let response = [];
 
@@ -96,6 +90,12 @@ const scrapeDataById = async (url, productId) => {
         text
       );
     };
+
+    const elementError = await page.$(".if-empty-dnone");
+
+    if (elementError) {
+      return (messageErro = "Nenhum produto encontrado para o ID informado");
+    }
 
     const title = await dataElement(".title-1");
 
@@ -294,8 +294,7 @@ const scrapeDataById = async (url, productId) => {
     await browser.close();
     return response;
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return errorRes.errorResponse500(res, error.message);
   }
 };
 

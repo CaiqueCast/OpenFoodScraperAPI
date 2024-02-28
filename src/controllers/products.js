@@ -2,17 +2,16 @@ const {
   scrapeDataByRank,
   scrapeDataById,
 } = require("../services/puppeteerFunctions");
+const validateId = require("../utils/validators/validateById");
+const errorRes = require("../utils/responses/errorResponse");
+const successRes = require("../utils/responses/successResponse");
+const validateRank = require("../utils/validators/validateByRank");
+const { number } = require("joi");
 
 const getProductByRank = async (req, res) => {
   try {
     const nutrition = req.query.nutrition;
     const nova = req.query.nova;
-
-    if (!nova && !nutrition) {
-      return res
-        .status(404)
-        .json(`É necessario informar a 'nutrition' ou o grupo 'nova'.`);
-    }
 
     let url = `https://br.openfoodfacts.org/`;
     if (!nova) {
@@ -22,27 +21,40 @@ const getProductByRank = async (req, res) => {
     } else {
       url += `/nutrition-grade/${nutrition}/nova-group/${nova}/`;
     }
+    Number(nova);
+    const validQuery = await validateRank({ nutrition, nova });
+    if (validQuery) {
+      return errorRes.errorResponse400(res, validQuery);
+    }
     const response = await scrapeDataByRank(url);
 
     if (response.length === 0) {
-      return res.status(404).json("Nenhum resultado encontrado");
+      return errorRes.errorResponse400(res, "Nenhum resultado encontrado");
     }
 
-    return res.status(200).json(response);
+    return successRes.successResponse200(res, response);
   } catch (error) {
-    return res.status(500).json("Erro interno do servidor");
+    return errorRes.errorResponse500(res, error.message);
   }
 };
 
 const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-    let url = `https://br.openfoodfacts.org/`;
-    const response = await scrapeDataById(url, id);
+    let url = `https://br.openfoodfacts.org/produto/${id}`;
 
-    return res.status(200).json(response);
+    const validId = await validateId({ id }, url);
+    if (validId) {
+      return errorRes.errorResponse400(res, validId);
+    }
+
+    const response = await scrapeDataById(url);
+    if (response.length === 0) {
+      return errorRes.errorResponse400(res, "Nenhum resultado encontrado");
+    }
+    return successRes.successResponse200(res, response);
   } catch (error) {
-    return res.status(500).json("Erro interno do servidor");
+    return errorRes.errorResponse500(res, error.message);
   }
 };
 

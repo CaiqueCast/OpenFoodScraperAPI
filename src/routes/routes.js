@@ -1,5 +1,5 @@
 const express = require("express");
-const { getProductByRank, getProductById } = require("./controllers/products");
+const { getProductByRank, getProductById } = require("../controllers/products");
 
 const routes = express();
 
