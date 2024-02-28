@@ -6,7 +6,6 @@ const validateId = require("../utils/validators/validateById");
 const errorRes = require("../utils/responses/errorResponse");
 const successRes = require("../utils/responses/successResponse");
 const validateRank = require("../utils/validators/validateByRank");
-const { number } = require("joi");
 
 const getProductByRank = async (req, res) => {
   try {
@@ -21,16 +20,13 @@ const getProductByRank = async (req, res) => {
     } else {
       url += `/nutrition-grade/${nutrition}/nova-group/${nova}/`;
     }
+
     Number(nova);
     const validQuery = await validateRank({ nutrition, nova });
     if (validQuery) {
       return errorRes.errorResponse400(res, validQuery);
     }
-    const response = await scrapeDataByRank(url);
-
-    if (response.length === 0) {
-      return errorRes.errorResponse400(res, "Nenhum resultado encontrado");
-    }
+    const response = await scrapeDataByRank(res, url);
 
     return successRes.successResponse200(res, response);
   } catch (error) {
@@ -48,10 +44,8 @@ const getProductById = async (req, res) => {
       return errorRes.errorResponse400(res, validId);
     }
 
-    const response = await scrapeDataById(url);
-    if (response.length === 0) {
-      return errorRes.errorResponse400(res, "Nenhum resultado encontrado");
-    }
+    const response = await scrapeDataById(res, url);
+
     return successRes.successResponse200(res, response);
   } catch (error) {
     return errorRes.errorResponse500(res, error.message);

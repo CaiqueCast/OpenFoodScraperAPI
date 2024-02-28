@@ -1,0 +1,209 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Open Food Facts web scraping.",
+        "summary": "A pet store manager.",
+        "description": "Essa é uma API que realiza web scraping no site Open Food Facts. A API é capaz de buscar produtos e detalhes do produto, filtrando por critérios Nutri-Score e NOVA, também é possível buscar um produto através do seu ID.",
+        "contact": {
+            "email": "caiquecastrosilva@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/products": {
+            "get": {
+                "description": "listagem de produtos através do grupo NOVA e da Nutrição",
+                "summary": "listagem por grupo NOVA e da Nutrição",
+                "tags": ["products"],
+                "parameters": [
+                    {
+                        "name": "nutrition",
+                        "in": "query",
+                        "description": "Parâmetro nutrition (de A até E) para filtragem dos produtos.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "nova",
+                        "in": "query",
+                        "description": "Parâmetro nova (de 1 a 4) para filtragem dos produtos.",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties":{
+                                        "id": {
+                                            "type": "number"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "nutrition": {
+                                            "type": "object",
+                                            "properties": {
+                                                "score": {
+                                                    "type": "string"
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "nova": {
+                                            "type": "object",
+                                            "properties": {
+                                                "score": {
+                                                    "type": "number"
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                            
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Nenhum resultado encontrado"
+                    },
+                    "500": {
+                        "description": "Erro no servidor"
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "description": "listagem de produtos através do Id",
+                "summary": "listagem por Id",
+                "tags": ["products"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do produto que ira ser pesquisado.",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "quantity": {
+                                            "type": "string"
+                                        },
+                                        "ingredients": {
+                                            "type": "object",
+                                            "properties": {
+                                                "hasPalmOil": {
+                                                    "type": "string"
+                                                },
+                                                "isVegan": {
+                                                    "type": "string"
+                                                },
+                                                "isVegetarian": {
+                                                    "type": "string"
+                                                },
+                                                "list": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "nutrition": {
+                                            "type": "object",
+                                            "properties": {
+                                                "score": {
+                                                    "type": "string"
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "values": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "servingSize": {
+                                                    "type": "string"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Energia": {
+                                                            "type": "string"
+                                                        },
+                                                        "Gorduras/lípidos": {
+                                                            "type": "string"
+                                                        },
+                                                        "Carboidratos": {
+                                                            "type": "string"
+                                                        },
+                                                        "Fibra alimentar": {
+                                                            "type": "string"
+                                                        },
+                                                        "Proteínas": {
+                                                            "type": "string"
+                                                        },
+                                                        "Sal": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "nova": {
+                                            "type": "object",
+                                            "properties": {
+                                                "score": {
+                                                    "type": "number"
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                    },
+                    "400": {
+                        "description": "Nenhum resultado encontrado"
+                    },
+                    "500": {
+                        "description": "Erro no servidor"
+                    }
+                }
+            }
+        }
+    }
+}
