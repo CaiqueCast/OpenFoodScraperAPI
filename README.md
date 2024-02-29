@@ -43,6 +43,7 @@ Esse comando irá iniciar a API, apartir disso ela já estará pronta para uso.
 
 - Para buscar produtos por classificação (rank): GET http://localhost/products?nutrition=valor&nova=valor
 - Para buscar detalhes de um produto por ID: GET http://localhost/products/:id
+
 **Certifique-se de incluir os parâmetros necessários, como nutrition e nova para a rota de busca por classificação e id para a rota de busca por ID.**
 
 ## Documentação
