@@ -41,38 +41,40 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties":{
-                                        "id": {
-                                            "type": "number"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "nutrition": {
-                                            "type": "object",
-                                            "properties": {
-                                                "score": {
-                                                    "type": "string"
-                                                },
-                                                "title": {
-                                                    "type": "string"
+                                    "type": "array",
+                                    "items": {
+                                        "properties":{
+                                            "id": {
+                                                "type": "number"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "nutrition": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "score": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    }
                                                 }
-                                            }
-                                        },
-                                        "nova": {
-                                            "type": "object",
-                                            "properties": {
-                                                "score": {
-                                                    "type": "number"
-                                                },
-                                                "title": {
-                                                    "type": "string"
-                                            
+                                            },
+                                            "nova": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "score": {
+                                                        "type": "number"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
+                                    }  
                                 }
                             }
                         }

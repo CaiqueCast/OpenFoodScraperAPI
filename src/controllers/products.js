@@ -2,10 +2,10 @@ const {
   scrapeDataByRank,
   scrapeDataById,
 } = require("../services/puppeteerFunctions");
-const validateId = require("../utils/validators/validateById");
 const errorRes = require("../utils/responses/errorResponse");
 const successRes = require("../utils/responses/successResponse");
 const validateRank = require("../utils/validators/validateByRank");
+const validateId = require("../utils/validators/validateById");
 
 const getProductByRank = async (req, res) => {
   try {
@@ -27,7 +27,10 @@ const getProductByRank = async (req, res) => {
       return errorRes.errorResponse400(res, validQuery);
     }
 
-    const response = await scrapeDataByRank(res, url);
+    const response = await scrapeDataByRank(url);
+    if (typeof response === "string") {
+      return errorRes.errorResponse400(res, response);
+    }
 
     return successRes.successResponse200(res, response);
   } catch (error) {
@@ -45,7 +48,10 @@ const getProductById = async (req, res) => {
       return errorRes.errorResponse400(res, validId);
     }
 
-    const response = await scrapeDataById(res, url);
+    const response = await scrapeDataById(url);
+    if (typeof response === "string") {
+      return errorRes.errorResponse400(res, response);
+    }
 
     return successRes.successResponse200(res, response);
   } catch (error) {
