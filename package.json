@@ -1,0 +1,26 @@
+{
+  "name": "openfoodscraperapi",
+  "version": "1.0.0",
+  "description": "Projeto de uma API que realiza web scraping no site Open Food Facts, capaz de buscar produtos e detalhes do produto, filtrando por critérios Nutri-Score e NOVA.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/index.js",
+    "start": "node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CaiqueCast/OpenFoodScraperAPI.git"
+  },
+  "author": "Caique Castro",
+  "license": "ISC",
+  "homepage": "https://github.com/CaiqueCast/OpenFoodScraperAPI#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "joi": "^17.12.2",
+    "puppeteer": "^22.2.0",
+    "swagger-ui-express": "^5.0.0"
+  }
+}
